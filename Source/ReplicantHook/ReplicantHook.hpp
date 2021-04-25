@@ -38,6 +38,7 @@ public:
 	uintptr_t getBaseAddress(void);
 	void start(void);
 	void stop(void);
+	void hookStatus(void);
 
 	void update();
 

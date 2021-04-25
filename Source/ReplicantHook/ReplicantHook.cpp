@@ -92,16 +92,18 @@ ReplicantHook::ReplicantHook()
 {
 	this->_hooked = false;
 	this->_baseAddress = 0;
-	/*this->_entityAddress = 0;
+	this->actorPlayable = 0;
 	this->_pID = 0;
-	this->Health = 0;
-	this->MaxHealth = 0;
-	this->Xpos = 0.000000;
-	this->Ypos = 0.000000;
-	this->Zpos = 0.000000;
-	this->EXP = 0;
-	this->Funds = 0;
-	this->Level = 0;*/
+	this->gold = 0;
+	this->health = 0;
+	this->level = 0;
+	this->magic = 0.0f;
+	this->playtime = 0.0;
+	this->x = 0;
+	this->y = 0;
+	this->z = 0;
+	this->zone = "";
+	this->name = "";
 }
 
 ReplicantHook::~ReplicantHook()
@@ -126,6 +128,14 @@ void ReplicantHook::start(void)
 void ReplicantHook::stop(void)
 {
 	this->_unHook();
+}
+
+void ReplicantHook::hookStatus(void)
+{
+	if (this->_pID != this->_getProcessID())
+	{
+		this->_unHook();
+	}
 }
 
 void ReplicantHook::update()
