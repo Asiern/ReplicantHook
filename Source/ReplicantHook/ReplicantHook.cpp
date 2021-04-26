@@ -64,8 +64,8 @@ void ReplicantHook::_unHook(void)
 	this->_baseAddress = 0;
 	this->actorPlayable = 0;
 	this->gold = 0;
-	this->zone = "";
-	this->name = "";
+	// this->zone = "";
+	// this->name = "";
 	this->health = 0;
 	this->magic = 0.0f;
 	this->level = 0;
@@ -102,8 +102,8 @@ ReplicantHook::ReplicantHook()
 	this->x = 0;
 	this->y = 0;
 	this->z = 0;
-	this->zone = "";
-	this->name = "";
+	// this->zone = "";
+	// this->name = "";
 }
 
 ReplicantHook::~ReplicantHook()
@@ -142,8 +142,8 @@ void ReplicantHook::update()
 {
 	this->actorPlayable = readMemory <DWORD>(0x26F72D0);
 	this->gold = readMemory<int>(0x437284C);
-	//this->zone = readMemory<std::string>(0x4372794);
-	//this->name = readMemory<std::string>(0x43727BC);
+	this->zone = readMemory<char[]>(0x4372794);
+	this->name = readMemory<char[]>(0x43727BC);
 	this->health = readMemory<int>(0x43727DC);
 	this->magic = readMemory<float>(0x43727E8);
 	this->level = readMemory<int>(0x43727F4);

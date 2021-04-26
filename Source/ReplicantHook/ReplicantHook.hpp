@@ -11,8 +11,8 @@ private:
 	bool _hooked;
 
 	int gold;
-	std::string zone;
-	std::string name;
+	char[12] zone;
+	char[12] name;
 	int health;
 	float magic;
 	int level;
@@ -45,8 +45,8 @@ public:
 	//Getters
 	bool isHooked(void);
 	int getGold();
-	std::string getZone();
-	std::string getName();
+	char[] getZone();
+	char[] getName();
 	int getHealth();
 	float getMagic();
 	int getLevel();
@@ -57,8 +57,8 @@ public:
 
 	//Setters
 	void setGold(int value);
-	void setZone(std::string value);
-	void setName(std::string value);
+	void setZone(char[] value);
+	void setName(char[] value);
 	void setHealth(int value);
 	void setMagic(float value);
 	void setLevel(int value);
