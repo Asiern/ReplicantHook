@@ -32,6 +32,7 @@ private:
 	template <typename T>
 	void writeMemory(uintptr_t address, T value);
 	std::string readMemoryString(uintptr_t address);
+	void writeMemoryString(uintptr_t address, std::string value);
 
 public:
 	ReplicantHook();
@@ -59,8 +60,8 @@ public:
 
 	//Setters
 	void setGold(int value);
-	void setZone(char value[]);
-	void setName(char value[]);
+	void setZone(std::string value);
+	void setName(std::string value);
 	void setHealth(int value);
 	void setMagic(float value);
 	void setLevel(int value);

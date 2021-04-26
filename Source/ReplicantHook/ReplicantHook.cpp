@@ -97,6 +97,14 @@ std::string ReplicantHook::readMemoryString(uintptr_t address)
 	return std::string(val);
 }
 
+void ReplicantHook::writeMemoryString(uintptr_t address, std::string value)
+{
+	SIZE_T BytesToWrite = value.length() + 1;
+	SIZE_T BytesWritten;
+	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
+	WriteProcessMemory(pHandle, (LPVOID)(this->_baseAddress + address), (LPCVOID)value.c_str(), BytesToWrite, &BytesWritten);
+}
+
 ReplicantHook::ReplicantHook()
 {
 	this->_hooked = false;
@@ -223,14 +231,14 @@ void ReplicantHook::setGold(int value)
 	this->writeMemory(0x437284C, value);
 }
 
-void ReplicantHook::setZone(char value[])
+void ReplicantHook::setZone(std::string value)
 {
-	this->writeMemory(0x4372794, value);
+	this->writeMemoryString(0x4372794, value);
 }
 
-void ReplicantHook::setName(char value[])
+void ReplicantHook::setName(std::string value)
 {
-	this->writeMemory(0x43727BC, value);
+	this->writeMemoryString(0x43727BC, value);
 }
 
 void ReplicantHook::setHealth(int value)
