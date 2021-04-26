@@ -88,6 +88,23 @@ void ReplicantHook::_patch(BYTE* destination, BYTE* src, unsigned int size)
 }
 
 
+std::string ReplicantHook::readMemoryString(uintptr_t address)
+{
+	char val[20];
+	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
+	ReadProcessMemory(pHandle, (LPCVOID)(this->_baseAddress + address), &val, sizeof(val), NULL);
+	CloseHandle(pHandle); //Close handle to prevent memory leaks
+	return std::string(val);
+}
+
+void ReplicantHook::writeMemoryString(uintptr_t address, std::string value)
+{
+	SIZE_T BytesToWrite = value.length() + 1;
+	SIZE_T BytesWritten;
+	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
+	WriteProcessMemory(pHandle, (LPVOID)(this->_baseAddress + address), (LPCVOID)value.c_str(), BytesToWrite, &BytesWritten);
+}
+
 ReplicantHook::ReplicantHook()
 {
 	this->_hooked = false;
@@ -140,10 +157,11 @@ void ReplicantHook::hookStatus(void)
 
 void ReplicantHook::update()
 {
-	this->actorPlayable = readMemory <DWORD>(0x26F72D0);
+	this->gold = 100;
+	this->actorPlayable = readMemory <uintptr_t>(0x26F72D0);
 	this->gold = readMemory<int>(0x437284C);
-	//this->zone = readMemory<std::string>(0x4372794);
-	//this->name = readMemory<std::string>(0x43727BC);
+	this->zone = readMemoryString(0x4372794);
+	this->name = readMemoryString(0x43727BC);
 	this->health = readMemory<int>(0x43727DC);
 	this->magic = readMemory<float>(0x43727E8);
 	this->level = readMemory<int>(0x43727F4);
@@ -215,12 +233,12 @@ void ReplicantHook::setGold(int value)
 
 void ReplicantHook::setZone(std::string value)
 {
-	this->writeMemory(0x4372794, value);
+	this->writeMemoryString(0x4372794, value);
 }
 
 void ReplicantHook::setName(std::string value)
 {
-	this->writeMemory(0x43727BC, value);
+	this->writeMemoryString(0x43727BC, value);
 }
 
 void ReplicantHook::setHealth(int value)

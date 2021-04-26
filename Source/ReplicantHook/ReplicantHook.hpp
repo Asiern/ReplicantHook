@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <string>
+
 class ReplicantHook
 {
 private:
@@ -30,6 +31,8 @@ private:
 	T readMemory(uintptr_t address);
 	template <typename T>
 	void writeMemory(uintptr_t address, T value);
+	std::string readMemoryString(uintptr_t address);
+	void writeMemoryString(uintptr_t address, std::string value);
 
 public:
 	ReplicantHook();
