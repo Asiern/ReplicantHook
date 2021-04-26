@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <string>
+
 class ReplicantHook
 {
 private:
@@ -11,8 +12,8 @@ private:
 	bool _hooked;
 
 	int gold;
-	char[12] zone;
-	char[12] name;
+	std::string zone;
+	std::string name;
 	int health;
 	float magic;
 	int level;
@@ -30,6 +31,7 @@ private:
 	T readMemory(uintptr_t address);
 	template <typename T>
 	void writeMemory(uintptr_t address, T value);
+	std::string readMemoryString(uintptr_t address);
 
 public:
 	ReplicantHook();
@@ -45,8 +47,8 @@ public:
 	//Getters
 	bool isHooked(void);
 	int getGold();
-	char[] getZone();
-	char[] getName();
+	std::string getZone();
+	std::string getName();
 	int getHealth();
 	float getMagic();
 	int getLevel();
@@ -57,8 +59,8 @@ public:
 
 	//Setters
 	void setGold(int value);
-	void setZone(char[] value);
-	void setName(char[] value);
+	void setZone(char value[]);
+	void setName(char value[]);
 	void setHealth(int value);
 	void setMagic(float value);
 	void setLevel(int value);
