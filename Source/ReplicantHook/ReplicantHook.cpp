@@ -47,11 +47,9 @@ uintptr_t ReplicantHook::_getModuleBaseAddress(DWORD procId, const wchar_t* modN
 //Hook to NieR:Automata process
 void ReplicantHook::_hook(void)
 {
-	DWORD ID = this->_pID;
-	while (ID <= 0)
-	{
-		ID = this->_getProcessID();
-	}
+	DWORD ID = this->_getProcessID();
+	if (ID <= 0)
+		return;
 	this->_pID = ID;
 	this->_baseAddress = this->_getModuleBaseAddress(ID, L"NieR Replicant ver.1.22474487139.exe");
 	this->_hooked = true;
@@ -157,7 +155,6 @@ void ReplicantHook::hookStatus(void)
 
 void ReplicantHook::update()
 {
-	this->gold = 100;
 	this->actorPlayable = readMemory <uintptr_t>(0x26F72D0);
 	this->gold = readMemory<int>(0x437284C);
 	this->zone = readMemoryString(0x4372794);
@@ -286,9 +283,9 @@ void ReplicantHook::setPosition(float x, float y, float z)
 void ReplicantHook::InfiniteHealth(bool enabled)
 {
 	if (enabled)
-		_patch((BYTE*)(this->_baseAddress + 0x5D106E2), (BYTE*)"\x90\x90\x90\x90", 4);
+		_patch((BYTE*)(this->_baseAddress + 0x5D106DD), (BYTE*)"\x90\x90\x90\x90", 4);
 	else
-		_patch((BYTE*)(this->_baseAddress + 0x5D106E2), (BYTE*)"\x89\x44\x81\x4C", 4);
+		_patch((BYTE*)(this->_baseAddress + 0x5D106DD), (BYTE*)"\x89\x44\x81\x4C", 4);
 }
 
 void ReplicantHook::InfiniteMagic(bool enabled)
