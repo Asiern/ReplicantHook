@@ -295,3 +295,52 @@ void ReplicantHook::InfiniteMagic(bool enabled)
 	else
 		_patch((BYTE*)(this->_baseAddress + 0x3BDB5E), (BYTE*)"\xF3\x0F\x11\x54\x81\x58", 6);
 }
+
+constexpr unsigned int str2int(const char* str, int h = 0)
+{
+	return !str[h] ? 5381 : (str2int(str, h + 1) * 33) ^ str[h];
+}
+
+void ReplicantHook::setActorModel(std::string model)
+{
+	BYTE* modelBytes;
+	switch (str2int(model.c_str())) {
+	case str2int("nierB"):
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
+		break;
+	case str2int("nierT"):
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x54\x00\x00"; //nierT
+		break;
+	case str2int("nierF"):
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x46\x00\x00"; //nierF
+		break;
+	case str2int("nierY"):
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x59\x00\x00"; //nierY
+		break;
+		//case str2int("nier010"):
+		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x31\x30"; //nier010
+		//	break;
+		//case str2int("nier011"):
+		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x31\x31"; //nier011
+		//	break;
+		//case str2int("nier020"):
+		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x32\x30"; //nier020
+		//	break;
+		//case str2int("nier030"):
+		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x33\x30"; //nier030
+		//	break;
+	case str2int("kaineE"):
+		modelBytes = (BYTE*)"\x6B\x61\x69\x6E\x65\x45\x00"; //kaineE
+		break;
+	default:
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //default nierB
+		break;
+	}
+	this->_patch((BYTE*)(this->_baseAddress + 0x0B88280), modelBytes, 7);
+}
+
+std::string ReplicantHook::getActorModel()
+{
+	return readMemoryString(0x0B88280);
+}
+
