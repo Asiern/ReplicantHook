@@ -98,6 +98,7 @@ You can find all the used IDs and offsets [here](https://docs.google.com/spreads
 - `getX` - returns player's X position
 - `getY` - returns player's Y position
 - `getZ` - returns player's Z position
+- `getActorModel` - returns current actor model name
 - `setX` - sets player's X position
 - `setY` - sets player's Y position
 - `setZ` - sets player's Z position
@@ -108,5 +109,10 @@ You can find all the used IDs and offsets [here](https://docs.google.com/spreads
 - `setZone` - sets world's Zone
 - `setName` - sets player's Name
 - `setLevel` - sets player's Level
+- `setActorModel` - sets actor model (you need to trigger a loading zone to see the results)
 - `InfiniteHealth` - enables or disables infinite Health
 - `InfiniteMagic` - enables or disables infinite Magic
+
+## Contributors
+
+- [`DeepGameResearch`](https://twitter.com/DeepGameRes) - model addresses finding
