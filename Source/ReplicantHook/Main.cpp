@@ -40,6 +40,9 @@ int main()
 	hook.InfiniteHealth(true);
 	hook.InfiniteMagic(true);
 
+	//Change actor model
+	hook.setActorModel("nierF");
+
 	//Create a thread to exit when the 'END' button is pressed
 	//thread exitThread(ENDPressed, &hook);
 

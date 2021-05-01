@@ -75,6 +75,10 @@ public:
 	void InfiniteHealth(bool enabled);
 	void InfiniteMagic(bool enabled);
 
+	//Models
+	void setActorModel(std::string model);
+	std::string getActorModel();
+
 };
 
 template<typename T>
