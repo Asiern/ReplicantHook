@@ -26,7 +26,7 @@ int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); //Look for memory leaks
 
-	ReplicantHook hook = ReplicantHook();
+	ReplicantHook hook = ReplicantHook(1); //Pass game version as parameter
 	cout << "Replicant Hook\n";
 	cout << "Hooking..." << endl;
 	//Hook to process

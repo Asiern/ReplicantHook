@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <string>
-
+#include "Offsets.hpp"
 class ReplicantHook
 {
 private:
@@ -10,6 +10,8 @@ private:
 	uintptr_t _baseAddress;
 	uintptr_t actorPlayable;
 	bool _hooked;
+	offsets _offsets;
+	int _version;
 
 	int gold;
 	std::string zone;
@@ -35,7 +37,7 @@ private:
 	void writeMemoryString(uintptr_t address, std::string value);
 
 public:
-	ReplicantHook();
+	ReplicantHook(int version);
 	~ReplicantHook();
 	DWORD getProcessID(void);
 	uintptr_t getBaseAddress(void);

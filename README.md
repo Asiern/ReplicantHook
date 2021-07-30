@@ -37,7 +37,7 @@ int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); //Look for memory leaks
 
-	ReplicantHook hook = ReplicantHook();
+	ReplicantHook hook = ReplicantHook(1); //Pass game version as parameter
 	cout << "Replicant Hook\n";
 	cout << "Hooking..." << endl;
 	//Hook to process
@@ -81,6 +81,12 @@ You can find all the used IDs and offsets [here](https://docs.google.com/spreads
 ---
 
 ## ReplicantHook Reference
+
+#### Version codes
+
+- `v1.0.0.0` > `0`
+
+- `v1.0.3.0` > `1`
 
 #### Methods
 

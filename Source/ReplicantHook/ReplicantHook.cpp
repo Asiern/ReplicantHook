@@ -1,4 +1,5 @@
 #include "ReplicantHook.hpp"
+#include <iostream>
 
 DWORD ReplicantHook::_getProcessID(void)
 {
@@ -45,14 +46,50 @@ uintptr_t ReplicantHook::_getModuleBaseAddress(DWORD procId, const wchar_t* modN
 }
 
 //Hook to NieR:Automata process
-void ReplicantHook::_hook(void)
+void ReplicantHook::_hook()
 {
+
 	DWORD ID = this->_getProcessID();
 	if (ID <= 0)
 		return;
 	this->_pID = ID;
 	this->_baseAddress = this->_getModuleBaseAddress(ID, L"NieR Replicant ver.1.22474487139.exe");
+
+	//Get game version
+
+
+	switch (_version) {
+	case 0: {
+		_offsets.entity = 0x4372790;
+		_offsets.actorPlayable = 0x26F72D0;
+		_offsets.model = 0xB88280;
+		_offsets.gold = 0xBC;
+		_offsets.zone = 0x4;
+		_offsets.name = 0x2C;
+		_offsets.health = 0x4C;
+		_offsets.magic = 0x58;
+		_offsets.level = 0x64;
+		_offsets.playtime = 0x4A0;
+		_offsets.InfiniteHealth = 0x5D106DD;
+		_offsets.InfiniteMagic = 0x3BDB5E;
+	}
+	case 1: {
+		_offsets.entity = 0x4374A20;
+		_offsets.actorPlayable = 0x26F9560;
+		_offsets.model = 0xB892C0;
+		_offsets.gold = 0xBC;
+		_offsets.zone = 0x4;
+		_offsets.name = 0x2C;
+		_offsets.health = 0x4C;
+		_offsets.magic = 0x58;
+		_offsets.level = 0x64;
+		_offsets.playtime = 0x4A0;
+		_offsets.InfiniteHealth = 0x5F72DED;
+		_offsets.InfiniteMagic = 0x3BE2BE;
+	}
+	}
 	this->_hooked = true;
+
 }
 //unHook NieR:Automata
 void ReplicantHook::_unHook(void)
@@ -103,8 +140,9 @@ void ReplicantHook::writeMemoryString(uintptr_t address, std::string value)
 	WriteProcessMemory(pHandle, (LPVOID)(this->_baseAddress + address), (LPCVOID)value.c_str(), BytesToWrite, &BytesWritten);
 }
 
-ReplicantHook::ReplicantHook()
+ReplicantHook::ReplicantHook(int version)
 {
+	this->_version = version;
 	this->_hooked = false;
 	this->_baseAddress = 0;
 	this->actorPlayable = 0;
@@ -155,14 +193,14 @@ void ReplicantHook::hookStatus(void)
 
 void ReplicantHook::update()
 {
-	this->actorPlayable = readMemory <uintptr_t>(0x26F72D0);
-	this->gold = readMemory<int>(0x437284C);
-	this->zone = readMemoryString(0x4372794);
-	this->name = readMemoryString(0x43727BC);
-	this->health = readMemory<int>(0x43727DC);
-	this->magic = readMemory<float>(0x43727E8);
-	this->level = readMemory<int>(0x43727F4);
-	this->playtime = readMemory<double>(0x4372C30);
+	this->actorPlayable = readMemory <uintptr_t>(_offsets.actorPlayable);
+	this->gold = readMemory<int>(_offsets.entity + _offsets.gold);
+	this->zone = readMemoryString(_offsets.entity + _offsets.zone);
+	this->name = readMemoryString(_offsets.entity + _offsets.name);
+	this->health = readMemory<int>(_offsets.entity + _offsets.health);
+	this->magic = readMemory<float>(_offsets.entity + _offsets.magic);
+	this->level = readMemory<int>(_offsets.entity + _offsets.level);
+	this->playtime = readMemory<double>(_offsets.entity + _offsets.playtime);
 	this->x = readMemory<float>((uintptr_t)this->actorPlayable + 0x9C);
 	this->y = readMemory<float>((uintptr_t)this->actorPlayable + 0xAC);
 	this->z = readMemory<float>((uintptr_t)this->actorPlayable + 0xBC);
@@ -225,37 +263,37 @@ float ReplicantHook::getZ()
 
 void ReplicantHook::setGold(int value)
 {
-	this->writeMemory(0x437284C, value);
+	this->writeMemory(_offsets.entity + _offsets.gold, value);
 }
 
 void ReplicantHook::setZone(std::string value)
 {
-	this->writeMemoryString(0x4372794, value);
+	this->writeMemoryString(_offsets.entity + _offsets.zone, value);
 }
 
 void ReplicantHook::setName(std::string value)
 {
-	this->writeMemoryString(0x43727BC, value);
+	this->writeMemoryString(_offsets.entity + _offsets.name, value);
 }
 
 void ReplicantHook::setHealth(int value)
 {
-	this->writeMemory(0x43727DC, value);
+	this->writeMemory(_offsets.entity + _offsets.health, value);
 }
 
 void ReplicantHook::setMagic(float value)
 {
-	this->writeMemory(0x43727E8, value);
+	this->writeMemory(_offsets.entity + _offsets.magic, value);
 }
 
 void ReplicantHook::setLevel(int value)
 {
-	this->writeMemory(0x43727F4, value);
+	this->writeMemory(_offsets.entity + _offsets.level, value);
 }
 
 void ReplicantHook::setPlaytime(double value)
 {
-	this->writeMemory(0x4372C30, value);
+	this->writeMemory(_offsets.entity + _offsets.playtime, value);
 }
 
 void ReplicantHook::setX(float value)
@@ -283,17 +321,17 @@ void ReplicantHook::setPosition(float x, float y, float z)
 void ReplicantHook::InfiniteHealth(bool enabled)
 {
 	if (enabled)
-		_patch((BYTE*)(this->_baseAddress + 0x5D106DD), (BYTE*)"\x90\x90\x90\x90", 4);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE*)"\x90\x90\x90\x90", 4);
 	else
-		_patch((BYTE*)(this->_baseAddress + 0x5D106DD), (BYTE*)"\x89\x44\x81\x4C", 4);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE*)"\x89\x44\x81\x4C", 4);
 }
 
 void ReplicantHook::InfiniteMagic(bool enabled)
 {
 	if (enabled)
-		_patch((BYTE*)(this->_baseAddress + 0x3BDB5E), (BYTE*)"\x90\x90\x90\x90\x90\x90", 6);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE*)"\x90\x90\x90\x90\x90\x90", 6);
 	else
-		_patch((BYTE*)(this->_baseAddress + 0x3BDB5E), (BYTE*)"\xF3\x0F\x11\x54\x81\x58", 6);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE*)"\xF3\x0F\x11\x54\x81\x58", 6);
 }
 
 constexpr unsigned int str2int(const char* str, int h = 0)
@@ -336,11 +374,11 @@ void ReplicantHook::setActorModel(std::string model)
 		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //default nierB
 		break;
 	}
-	this->_patch((BYTE*)(this->_baseAddress + 0x0B88280), modelBytes, 7);
+	this->_patch((BYTE*)(this->_baseAddress + _offsets.model), modelBytes, 7);
 }
 
 std::string ReplicantHook::getActorModel()
 {
-	return readMemoryString(0x0B88280);
+	return readMemoryString(_offsets.model);
 }
 
