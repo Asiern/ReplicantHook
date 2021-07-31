@@ -3,6 +3,7 @@
 #include <TlHelp32.h>
 #include <string>
 #include "Offsets.hpp"
+#include <map>
 class ReplicantHook
 {
 private:
@@ -12,6 +13,7 @@ private:
 	bool _hooked;
 	offsets _offsets;
 	int _version;
+	std::map<std::string, uintptr_t> _inventory;
 
 	int gold;
 	std::string zone;
@@ -35,6 +37,8 @@ private:
 	void writeMemory(uintptr_t address, T value);
 	std::string readMemoryString(uintptr_t address);
 	void writeMemoryString(uintptr_t address, std::string value);
+	void loadInventory();
+	uintptr_t getItemAddress(std::string name);
 
 public:
 	ReplicantHook(int version);
@@ -80,6 +84,11 @@ public:
 	//Models
 	void setActorModel(std::string model);
 	std::string getActorModel();
+
+	//Inventory
+	std::map<std::string, uintptr_t> getInventory(void);
+	int addItem(std::string name, int quantity);
+	int removeItem(std::string name);
 
 };
 
