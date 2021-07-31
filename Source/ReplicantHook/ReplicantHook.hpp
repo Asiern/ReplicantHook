@@ -88,7 +88,7 @@ inline T ReplicantHook::readMemory(uintptr_t address)
 {
 	T value;
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
-	ReadProcessMemory(pHandle, (LPCVOID)(this->_baseAddress + address), &value, sizeof(value), NULL);
+	ReadProcessMemory(pHandle, (LPCVOID)(address), &value, sizeof(value), NULL);
 	CloseHandle(pHandle); //Close handle to prevent memory leaks
 	return value;
 }
@@ -97,7 +97,7 @@ template<typename T>
 inline void ReplicantHook::writeMemory(uintptr_t address, T value)
 {
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, NULL, this->_pID);
-	WriteProcessMemory(pHandle, (LPVOID)(this->_baseAddress + address), &value, sizeof(value), NULL);
+	WriteProcessMemory(pHandle, (LPVOID)(address), &value, sizeof(value), NULL);
 	CloseHandle(pHandle);
 }
 
