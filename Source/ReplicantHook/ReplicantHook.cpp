@@ -127,7 +127,7 @@ std::string ReplicantHook::readMemoryString(uintptr_t address)
 {
 	char val[20];
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
-	ReadProcessMemory(pHandle, (LPCVOID)(this->_baseAddress + address), &val, sizeof(val), NULL);
+	ReadProcessMemory(pHandle, (LPCVOID)address, &val, sizeof(val), NULL);
 	CloseHandle(pHandle); //Close handle to prevent memory leaks
 	return std::string(val);
 }
@@ -137,7 +137,7 @@ void ReplicantHook::writeMemoryString(uintptr_t address, std::string value)
 	SIZE_T BytesToWrite = value.length() + 1;
 	SIZE_T BytesWritten;
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
-	WriteProcessMemory(pHandle, (LPVOID)(this->_baseAddress + address), (LPCVOID)value.c_str(), BytesToWrite, &BytesWritten);
+	WriteProcessMemory(pHandle, (LPVOID)address, (LPCVOID)value.c_str(), BytesToWrite, &BytesWritten);
 }
 
 ReplicantHook::ReplicantHook(int version)
@@ -193,17 +193,17 @@ void ReplicantHook::hookStatus(void)
 
 void ReplicantHook::update()
 {
-	this->actorPlayable = readMemory <uintptr_t>(_offsets.actorPlayable);
-	this->gold = readMemory<int>(_offsets.entity + _offsets.gold);
-	this->zone = readMemoryString(_offsets.entity + _offsets.zone);
-	this->name = readMemoryString(_offsets.entity + _offsets.name);
-	this->health = readMemory<int>(_offsets.entity + _offsets.health);
-	this->magic = readMemory<float>(_offsets.entity + _offsets.magic);
-	this->level = readMemory<int>(_offsets.entity + _offsets.level);
-	this->playtime = readMemory<double>(_offsets.entity + _offsets.playtime);
-	this->x = readMemory<float>((uintptr_t)this->actorPlayable + 0x9C);
-	this->y = readMemory<float>((uintptr_t)this->actorPlayable + 0xAC);
-	this->z = readMemory<float>((uintptr_t)this->actorPlayable + 0xBC);
+	this->actorPlayable = readMemory <uintptr_t>(this->_baseAddress + _offsets.actorPlayable);
+	this->gold = readMemory<int>(this->_baseAddress + _offsets.entity + _offsets.gold);
+	this->zone = readMemoryString(this->_baseAddress + _offsets.entity + _offsets.zone);
+	this->name = readMemoryString(this->_baseAddress + _offsets.entity + _offsets.name);
+	this->health = readMemory<int>(this->_baseAddress + _offsets.entity + _offsets.health);
+	this->magic = readMemory<float>(this->_baseAddress + _offsets.entity + _offsets.magic);
+	this->level = readMemory<int>(this->_baseAddress + _offsets.entity + _offsets.level);
+	this->playtime = readMemory<double>(this->_baseAddress + _offsets.entity + _offsets.playtime);
+	this->x = readMemory<float>((uintptr_t)(this->actorPlayable + 0x9C));
+	this->y = readMemory<float>((uintptr_t)(this->actorPlayable + 0xAC));
+	this->z = readMemory<float>((uintptr_t)(this->actorPlayable + 0xBC));
 }
 
 bool ReplicantHook::isHooked(void)
@@ -263,37 +263,37 @@ float ReplicantHook::getZ()
 
 void ReplicantHook::setGold(int value)
 {
-	this->writeMemory(_offsets.entity + _offsets.gold, value);
+	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.gold, value);
 }
 
 void ReplicantHook::setZone(std::string value)
 {
-	this->writeMemoryString(_offsets.entity + _offsets.zone, value);
+	this->writeMemoryString(this->_baseAddress + _offsets.entity + _offsets.zone, value);
 }
 
 void ReplicantHook::setName(std::string value)
 {
-	this->writeMemoryString(_offsets.entity + _offsets.name, value);
+	this->writeMemoryString(this->_baseAddress + _offsets.entity + _offsets.name, value);
 }
 
 void ReplicantHook::setHealth(int value)
 {
-	this->writeMemory(_offsets.entity + _offsets.health, value);
+	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.health, value);
 }
 
 void ReplicantHook::setMagic(float value)
 {
-	this->writeMemory(_offsets.entity + _offsets.magic, value);
+	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.magic, value);
 }
 
 void ReplicantHook::setLevel(int value)
 {
-	this->writeMemory(_offsets.entity + _offsets.level, value);
+	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.level, value);
 }
 
 void ReplicantHook::setPlaytime(double value)
 {
-	this->writeMemory(_offsets.entity + _offsets.playtime, value);
+	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.playtime, value);
 }
 
 void ReplicantHook::setX(float value)
@@ -379,6 +379,6 @@ void ReplicantHook::setActorModel(std::string model)
 
 std::string ReplicantHook::getActorModel()
 {
-	return readMemoryString(_offsets.model);
+	return readMemoryString(this->_baseAddress + _offsets.model);
 }
 

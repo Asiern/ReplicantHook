@@ -53,6 +53,7 @@ int main()
 		cout << "Health " << hook.getHealth() << endl;
 		cout << "Gold " << hook.getGold() << endl;
 		cout << "Zone " << hook.getZone() << endl;
+		cout << "X: " << hook.getX() << " Y: " << hook.getY() << "  Z: " << hook.getZ() << endl;
 		Sleep(500);
 		system("cls");
 	}
