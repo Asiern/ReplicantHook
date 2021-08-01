@@ -57,9 +57,10 @@ void ReplicantHook::_hook()
 
 	//Get game version
 
-
-	switch (_version) {
-	case 0: {
+	switch (_version)
+	{
+	case 0:
+	{
 		_offsets.entity = 0x4372790;
 		_offsets.actorPlayable = 0x26F72D0;
 		_offsets.model = 0xB88280;
@@ -73,7 +74,8 @@ void ReplicantHook::_hook()
 		_offsets.InfiniteHealth = 0x5D106DD;
 		_offsets.InfiniteMagic = 0x3BDB5E;
 	}
-	case 1: {
+	case 1:
+	{
 		_offsets.entity = 0x4374A20;
 		_offsets.actorPlayable = 0x26F9560;
 		_offsets.model = 0xB892C0;
@@ -89,7 +91,6 @@ void ReplicantHook::_hook()
 	}
 	}
 	this->_hooked = true;
-
 }
 //unHook NieR:Automata
 void ReplicantHook::_unHook(void)
@@ -121,7 +122,6 @@ void ReplicantHook::_patch(BYTE* destination, BYTE* src, unsigned int size)
 	VirtualProtectEx(pHandle, destination, size, oldprotection, &oldprotection);
 	CloseHandle(pHandle);
 }
-
 
 std::string ReplicantHook::readMemoryString(uintptr_t address)
 {
@@ -194,7 +194,7 @@ void ReplicantHook::hookStatus(void)
 
 void ReplicantHook::update()
 {
-	this->actorPlayable = readMemory <uintptr_t>(this->_baseAddress + _offsets.actorPlayable);
+	this->actorPlayable = readMemory<uintptr_t>(this->_baseAddress + _offsets.actorPlayable);
 	this->gold = readMemory<int>(this->_baseAddress + _offsets.entity + _offsets.gold);
 	this->zone = readMemoryString(this->_baseAddress + _offsets.entity + _offsets.zone);
 	this->name = readMemoryString(this->_baseAddress + _offsets.entity + _offsets.name);
@@ -343,7 +343,8 @@ constexpr unsigned int str2int(const char* str, int h = 0)
 void ReplicantHook::setActorModel(std::string model)
 {
 	BYTE* modelBytes;
-	switch (str2int(model.c_str())) {
+	switch (str2int(model.c_str()))
+	{
 	case str2int("nierB"):
 		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
 		break;
@@ -370,6 +371,9 @@ void ReplicantHook::setActorModel(std::string model)
 		//	break;
 	case str2int("kaineE"):
 		modelBytes = (BYTE*)"\x6B\x61\x69\x6E\x65\x45\x00"; //kaineE
+		break;
+	default:
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
 		break;
 	}
 	this->_patch((BYTE*)(this->_baseAddress + _offsets.model), modelBytes, 7);
@@ -511,7 +515,7 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Boar Hide", 0x4373B8A));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Wolf Hide", 0x4373B8B));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Wolf Fang", 0x4373B8C));
-	this->_inventory.insert(std::pair<std::string, uintptr_t>("Giant Spider SIlk", 0x4373B8D));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Giant Spider Silk", 0x4373B8D));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Bat Fang", 0x4373B8E));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Bat Wing", 0x4373B8F));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Goat Meat", 0x4373B90));
@@ -592,7 +596,7 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Perfume Bottle", 0x4373BE6));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Postman's Parcel", 0x4373BE7));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lover's Letter", 0x4373BE8));
-	this->_inventory.insert(std::pair<std::string, uintptr_t>("Water FIlter", 0x4373BE9));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Water Filter", 0x4373BE9));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Royal Compass", 0x4373BEA));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Vapor Moss", 0x4373BEB));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Valley Spoder Silk", 0x4373BEC));
@@ -668,9 +672,10 @@ void ReplicantHook::loadInventory()
 uintptr_t ReplicantHook::getItemAddress(std::string name)
 {
 	std::map<std::string, uintptr_t>::iterator it = _inventory.begin();
-	std::map<std::string, uintptr_t >::iterator end = _inventory.end();
-	for (;it != end;it++) {
-		if (it->first == name) {
+	std::map<std::string, uintptr_t>::iterator end = _inventory.end();
+	for (; it != end; it++) {
+		if (it->first == name)
+		{
 			return it->second;
 		}
 	}
