@@ -371,9 +371,6 @@ void ReplicantHook::setActorModel(std::string model)
 	case str2int("kaineE"):
 		modelBytes = (BYTE*)"\x6B\x61\x69\x6E\x65\x45\x00"; //kaineE
 		break;
-	default:
-		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //default nierB
-		break;
 	}
 	this->_patch((BYTE*)(this->_baseAddress + _offsets.model), modelBytes, 7);
 }
@@ -583,6 +580,89 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Mouse Tail", 0x4373BDA));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lizard Tail", 0x4373BDB));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Deer Antler", 0x4373BDF));
+
+	//Key Items
+
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Moon Key", 0x4373BE0));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Star Key", 0x4373BE1));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Light Key", 0x4373BE2));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Darkness Key", 0x4373BE3));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Fine Flour", 0x4373BE4));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Coarse FLour", 0x4373BE5));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Perfume Bottle", 0x4373BE6));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Postman's Parcel", 0x4373BE7));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lover's Letter", 0x4373BE8));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Water FIlter", 0x4373BE9));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Royal Compass", 0x4373BEA));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Vapor Moss", 0x4373BEB));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Valley Spoder Silk", 0x4373BEC));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Animal Guidebook", 0x4373BED));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Ore Guidebook", 0x4373BEE));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Plant Guidebook", 0x4373BEF));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Red Book", 0x4373BF0));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Blue Book", 0x4373BF1));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Old Lady's Elixer", 0x4373BF2));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Old Lady's Elixer+", 0x4373BF3));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Parcel for The Aerie", 0x4373BF4));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Parcel for Seafront", 0x4373BF5));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Cookbook", 0x4373BF6));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Parcel for Facade", 0x4373BF7));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Max's Herbs", 0x4373BF8));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Drifting Cargo", 0x4373BF9));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Drifting Cargo 2", 0x4373BFA));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Drifting Cargo 3", 0x4373BFB));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Drifting Cargo 4", 0x4373BFC));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Old Package", 0x4373BFD));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Mermaid Tear", 0x4373BFE));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Mandrake Leaf", 0x4373BFF));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Energizer", 0x4373C00));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Tad Oil", 0x4373C01));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Sleep-B-Gone", 0x4373C02));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Antidote", 0x4373C03));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Gold Bracelet", 0x4373C04));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Elite Kitchen Knife", 0x4373C05));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Elevator Parts", 0x4373C06));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Dirty Treasure Map", 0x4373C07));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Restored Treasure Map", 0x4373C08));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Jade Hair Ornament", 0x4373C09));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Employee List", 0x4373C0A));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Small Safe", 0x4373C0B));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Safe Key", 0x4373C0C));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Greaty Tree Root", 0x4373C0D));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Eye of Power", 0x4373C0E));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Ribbon", 0x4373C0F));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Yonah's Ribbon", 0x4373C10));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Bronze Key", 0x4373C11));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Brass Key", 0x4373C12));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Boar Tusk", 0x4373C13));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Pressed Freesia", 0x4373C14));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Potted Freesia", 0x4373C15));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Fressia(Delivery)", 0x4373C16));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Pile of Junk", 0x4373C17));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Old Gold Coin", 0x4373C18));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Market Map", 0x4373C19));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("AA Keycard", 0x4373C1A));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("KA Keycard", 0x4373C1B));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("SA Keycard", 0x4373C1C));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("TA Keycard", 0x4373C1D));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("NA Keycard", 0x4373C1E));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("HA Keycard", 0x4373C1F));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("MA Keycard", 0x4373C20));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("YA Keycard", 0x4373C21));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("RA Keycard", 0x4373C22));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("WA Keycard", 0x4373C23));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Cultivator's Handbook", 0x4373C24));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Red Bag", 0x4373C25));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lantern", 0x4373C26));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Empty Lantern", 0x4373C27));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Hold Key", 0x4373C28));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Passageway Key", 0x4373C29));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Goat Key", 0x4373C2A));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lizard Key", 0x4373C2B));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Unlocking Procedure Memo", 0x4373C2C));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Red Jewel", 0x4373C2D));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Red Flowers", 0x4373C2E));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Apples", 0x4373C2F));
 }
 
 uintptr_t ReplicantHook::getItemAddress(std::string name)
