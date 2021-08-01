@@ -118,6 +118,9 @@ You can find all the used IDs and offsets [here](https://docs.google.com/spreads
 - `setActorModel` - sets actor model (you need to trigger a loading zone to see the results)
 - `InfiniteHealth` - enables or disables infinite Health
 - `InfiniteMagic` - enables or disables infinite Magic
+- `addItem` - adds items to inventory
+- `remove Item` - removes items from inventory
+- `getInventory` - returns the game Inventory and respective memory offsets as a map
 
 ## Contributors
 
