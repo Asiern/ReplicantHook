@@ -119,7 +119,7 @@ You can find all the used IDs and offsets [here](https://docs.google.com/spreads
 - `InfiniteHealth` - enables or disables infinite Health
 - `InfiniteMagic` - enables or disables infinite Magic
 - `addItem` - adds items to inventory
-- `remove Item` - removes items from inventory
+- `removeItem` - removes items from inventory
 - `getInventory` - returns the game Inventory and respective memory offsets as a map
 
 ## Contributors
