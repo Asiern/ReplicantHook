@@ -21,7 +21,7 @@ DWORD ReplicantHook::_getProcessID(void)
 	return pID;
 }
 
-uintptr_t ReplicantHook::_getModuleBaseAddress(DWORD procId, const wchar_t* modName)
+uintptr_t ReplicantHook::_getModuleBaseAddress(DWORD procId, const wchar_t *modName)
 {
 	uintptr_t modBaseAddr = 0;
 	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
@@ -113,7 +113,7 @@ void ReplicantHook::_unHook(void)
 	this->InfiniteMagic(false);
 }
 
-void ReplicantHook::_patch(BYTE* destination, BYTE* src, unsigned int size)
+void ReplicantHook::_patch(BYTE *destination, BYTE *src, unsigned int size)
 {
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
 	DWORD oldprotection;
@@ -322,40 +322,40 @@ void ReplicantHook::setPosition(float x, float y, float z)
 void ReplicantHook::InfiniteHealth(bool enabled)
 {
 	if (enabled)
-		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE*)"\x90\x90\x90\x90", 4);
+		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE *)"\x90\x90\x90\x90", 4);
 	else
-		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE*)"\x89\x44\x81\x4C", 4);
+		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE *)"\x89\x44\x81\x4C", 4);
 }
 
 void ReplicantHook::InfiniteMagic(bool enabled)
 {
 	if (enabled)
-		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE*)"\x90\x90\x90\x90\x90\x90", 6);
+		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE *)"\x90\x90\x90\x90\x90\x90", 6);
 	else
-		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE*)"\xF3\x0F\x11\x54\x81\x58", 6);
+		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE *)"\xF3\x0F\x11\x54\x81\x58", 6);
 }
 
-constexpr unsigned int str2int(const char* str, int h = 0)
+constexpr unsigned int str2int(const char *str, int h = 0)
 {
 	return !str[h] ? 5381 : (str2int(str, h + 1) * 33) ^ str[h];
 }
 
 void ReplicantHook::setActorModel(std::string model)
 {
-	BYTE* modelBytes;
+	BYTE *modelBytes;
 	switch (str2int(model.c_str()))
 	{
 	case str2int("nierB"):
-		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
+		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
 		break;
 	case str2int("nierT"):
-		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x54\x00\x00"; //nierT
+		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x54\x00\x00"; //nierT
 		break;
 	case str2int("nierF"):
-		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x46\x00\x00"; //nierF
+		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x46\x00\x00"; //nierF
 		break;
 	case str2int("nierY"):
-		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x59\x00\x00"; //nierY
+		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x59\x00\x00"; //nierY
 		break;
 		//case str2int("nier010"):
 		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x31\x30"; //nier010
@@ -370,13 +370,13 @@ void ReplicantHook::setActorModel(std::string model)
 		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x33\x30"; //nier030
 		//	break;
 	case str2int("kaineE"):
-		modelBytes = (BYTE*)"\x6B\x61\x69\x6E\x65\x45\x00"; //kaineE
+		modelBytes = (BYTE *)"\x6B\x61\x69\x6E\x65\x45\x00"; //kaineE
 		break;
 	default:
-		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
+		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
 		break;
 	}
-	this->_patch((BYTE*)(this->_baseAddress + _offsets.model), modelBytes, 7);
+	this->_patch((BYTE *)(this->_baseAddress + _offsets.model), modelBytes, 7);
 }
 
 std::string ReplicantHook::getActorModel()
@@ -409,8 +409,8 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Medicinal Herb", 0x4374AE0));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Health Salve", 0x4374AE1));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Recovery Potion", 0x4374AE2));
-	this->_inventory.insert(std::pair<std::string, uintptr_t>("Strenght Drop", 0x4374AF5));
-	this->_inventory.insert(std::pair<std::string, uintptr_t>("Strenght Capsule", 0x4374AF6));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Strength Drop", 0x4374AF5));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Strength Capsule", 0x4374AF6));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Magic Drop", 0x4374AF7));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Magic Capsule", 0x4374AF8));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Defense Drop", 0x4374AF9));
@@ -673,7 +673,8 @@ uintptr_t ReplicantHook::getItemAddress(std::string name)
 {
 	std::map<std::string, uintptr_t>::iterator it = _inventory.begin();
 	std::map<std::string, uintptr_t>::iterator end = _inventory.end();
-	for (; it != end; it++) {
+	for (; it != end; it++)
+	{
 		if (it->first == name)
 		{
 			return it->second;
