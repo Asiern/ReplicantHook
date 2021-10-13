@@ -1,40 +1,32 @@
 #include "ReplicantHook.hpp"
 #include <iostream>
 
-DWORD ReplicantHook::_getProcessID(void)
-{
+DWORD ReplicantHook::_getProcessID(void) {
 	//Search game window
 	HWND hwnd = FindWindowA(NULL, "NieR Replicant ver.1.22474487139...");
-	if (hwnd == NULL)
-	{
+	if (hwnd == NULL) {
 		//return if game window not found
 		return 0;
 	}
 	DWORD pID;													  //Process ID
 	GetWindowThreadProcessId(hwnd, &pID);						  //Get Process ID
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pID); //Open process
-	if (pHandle == INVALID_HANDLE_VALUE)
-	{
+	if (pHandle == INVALID_HANDLE_VALUE) {
 		//return if couldn't open the process
 		return 0;
 	}
 	return pID;
 }
 
-uintptr_t ReplicantHook::_getModuleBaseAddress(DWORD procId, const wchar_t *modName)
-{
+uintptr_t ReplicantHook::_getModuleBaseAddress(DWORD procId, const wchar_t* modName) {
 	uintptr_t modBaseAddr = 0;
 	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
-	if (hSnap != INVALID_HANDLE_VALUE)
-	{
+	if (hSnap != INVALID_HANDLE_VALUE) {
 		MODULEENTRY32 modEntry;
 		modEntry.dwSize = sizeof(modEntry);
-		if (Module32First(hSnap, &modEntry))
-		{
-			do
-			{
-				if (!_wcsicmp(modEntry.szModule, modName))
-				{
+		if (Module32First(hSnap, &modEntry)) {
+			do {
+				if (!_wcsicmp(modEntry.szModule, modName)) {
 					modBaseAddr = (uintptr_t)modEntry.modBaseAddr;
 					break;
 				}
@@ -46,8 +38,7 @@ uintptr_t ReplicantHook::_getModuleBaseAddress(DWORD procId, const wchar_t *modN
 }
 
 //Hook to NieR:Automata process
-void ReplicantHook::_hook()
-{
+void ReplicantHook::_hook() {
 
 	DWORD ID = this->_getProcessID();
 	if (ID <= 0)
@@ -57,10 +48,8 @@ void ReplicantHook::_hook()
 
 	//Get game version
 
-	switch (_version)
-	{
-	case 0:
-	{
+	switch (_version) {
+	case 0: {
 		_offsets.entity = 0x4372790;
 		_offsets.actorPlayable = 0x26F72D0;
 		_offsets.model = 0xB88280;
@@ -74,8 +63,7 @@ void ReplicantHook::_hook()
 		_offsets.InfiniteHealth = 0x5D106DD;
 		_offsets.InfiniteMagic = 0x3BDB5E;
 	}
-	case 1:
-	{
+	case 1: {
 		_offsets.entity = 0x4374A20;
 		_offsets.actorPlayable = 0x26F9560;
 		_offsets.model = 0xB892C0;
@@ -93,8 +81,7 @@ void ReplicantHook::_hook()
 	this->_hooked = true;
 }
 //unHook NieR:Automata
-void ReplicantHook::_unHook(void)
-{
+void ReplicantHook::_unHook(void) {
 	this->_hooked = false;
 	this->_pID = 0;
 	this->_baseAddress = 0;
@@ -113,8 +100,7 @@ void ReplicantHook::_unHook(void)
 	this->InfiniteMagic(false);
 }
 
-void ReplicantHook::_patch(BYTE *destination, BYTE *src, unsigned int size)
-{
+void ReplicantHook::_patch(BYTE* destination, BYTE* src, unsigned int size) {
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
 	DWORD oldprotection;
 	VirtualProtectEx(pHandle, destination, size, PAGE_EXECUTE_READWRITE, &oldprotection);
@@ -123,8 +109,7 @@ void ReplicantHook::_patch(BYTE *destination, BYTE *src, unsigned int size)
 	CloseHandle(pHandle);
 }
 
-std::string ReplicantHook::readMemoryString(uintptr_t address)
-{
+std::string ReplicantHook::readMemoryString(uintptr_t address) {
 	char val[20];
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
 	ReadProcessMemory(pHandle, (LPCVOID)address, &val, sizeof(val), NULL);
@@ -132,16 +117,14 @@ std::string ReplicantHook::readMemoryString(uintptr_t address)
 	return std::string(val);
 }
 
-void ReplicantHook::writeMemoryString(uintptr_t address, std::string value)
-{
+void ReplicantHook::writeMemoryString(uintptr_t address, std::string value) {
 	SIZE_T BytesToWrite = value.length() + 1;
 	SIZE_T BytesWritten;
 	HANDLE pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, this->_pID);
 	WriteProcessMemory(pHandle, (LPVOID)address, (LPCVOID)value.c_str(), BytesToWrite, &BytesWritten);
 }
 
-ReplicantHook::ReplicantHook(int version)
-{
+ReplicantHook::ReplicantHook(int version) {
 	this->_version = version;
 	this->_hooked = false;
 	this->_baseAddress = 0;
@@ -160,40 +143,32 @@ ReplicantHook::ReplicantHook(int version)
 	this->loadInventory();
 }
 
-ReplicantHook::~ReplicantHook()
-{
+ReplicantHook::~ReplicantHook() {
 }
 
-DWORD ReplicantHook::getProcessID(void)
-{
+DWORD ReplicantHook::getProcessID(void) {
 	return this->_pID;
 }
 
-uintptr_t ReplicantHook::getBaseAddress(void)
-{
+uintptr_t ReplicantHook::getBaseAddress(void) {
 	return this->_baseAddress;
 }
 
-void ReplicantHook::start(void)
-{
+void ReplicantHook::start(void) {
 	this->_hook();
 }
 
-void ReplicantHook::stop(void)
-{
+void ReplicantHook::stop(void) {
 	this->_unHook();
 }
 
-void ReplicantHook::hookStatus(void)
-{
-	if (this->_pID != this->_getProcessID())
-	{
+void ReplicantHook::hookStatus(void) {
+	if (this->_pID != this->_getProcessID()) {
 		this->_unHook();
 	}
 }
 
-void ReplicantHook::update()
-{
+void ReplicantHook::update() {
 	this->actorPlayable = readMemory<uintptr_t>(this->_baseAddress + _offsets.actorPlayable);
 	this->gold = readMemory<int>(this->_baseAddress + _offsets.entity + _offsets.gold);
 	this->zone = readMemoryString(this->_baseAddress + _offsets.entity + _offsets.zone);
@@ -207,155 +182,128 @@ void ReplicantHook::update()
 	this->z = readMemory<float>((uintptr_t)(this->actorPlayable + 0xBC));
 }
 
-bool ReplicantHook::isHooked(void)
-{
+bool ReplicantHook::isHooked(void) {
 	return this->_hooked;
 }
 
-int ReplicantHook::getGold()
-{
+int ReplicantHook::getGold() {
 	return this->gold;
 }
 
-std::string ReplicantHook::getZone()
-{
+std::string ReplicantHook::getZone() {
 	return this->zone;
 }
 
-std::string ReplicantHook::getName()
-{
+std::string ReplicantHook::getName() {
 	return this->name;
 }
 
-int ReplicantHook::getHealth()
-{
+int ReplicantHook::getHealth() {
 	return this->health;
 }
 
-float ReplicantHook::getMagic()
-{
+float ReplicantHook::getMagic() {
 	return this->magic;
 }
 
-int ReplicantHook::getLevel()
-{
+int ReplicantHook::getLevel() {
 	return this->level;
 }
 
-double ReplicantHook::getPlaytime()
-{
+double ReplicantHook::getPlaytime() {
 	return this->playtime;
 }
 
-float ReplicantHook::getX()
-{
+float ReplicantHook::getX() {
 	return this->x;
 }
 
-float ReplicantHook::getY()
-{
+float ReplicantHook::getY() {
 	return this->y;
 }
 
-float ReplicantHook::getZ()
-{
+float ReplicantHook::getZ() {
 	return this->z;
 }
 
-void ReplicantHook::setGold(int value)
-{
+void ReplicantHook::setGold(int value) {
 	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.gold, value);
 }
 
-void ReplicantHook::setZone(std::string value)
-{
+void ReplicantHook::setZone(std::string value) {
 	this->writeMemoryString(this->_baseAddress + _offsets.entity + _offsets.zone, value);
 }
 
-void ReplicantHook::setName(std::string value)
-{
+void ReplicantHook::setName(std::string value) {
 	this->writeMemoryString(this->_baseAddress + _offsets.entity + _offsets.name, value);
 }
 
-void ReplicantHook::setHealth(int value)
-{
+void ReplicantHook::setHealth(int value) {
 	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.health, value);
 }
 
-void ReplicantHook::setMagic(float value)
-{
+void ReplicantHook::setMagic(float value) {
 	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.magic, value);
 }
 
-void ReplicantHook::setLevel(int value)
-{
+void ReplicantHook::setLevel(int value) {
 	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.level, value);
 }
 
-void ReplicantHook::setPlaytime(double value)
-{
+void ReplicantHook::setPlaytime(double value) {
 	this->writeMemory(this->_baseAddress + _offsets.entity + _offsets.playtime, value);
 }
 
-void ReplicantHook::setX(float value)
-{
+void ReplicantHook::setX(float value) {
 	this->writeMemory(this->actorPlayable + 0x9C, value);
 }
 
-void ReplicantHook::setY(float value)
-{
+void ReplicantHook::setY(float value) {
 	this->writeMemory(this->actorPlayable + 0xAC, value);
 }
 
-void ReplicantHook::setZ(float value)
-{
+void ReplicantHook::setZ(float value) {
 	this->writeMemory(this->actorPlayable + 0xBC, value);
 }
 
-void ReplicantHook::setPosition(float x, float y, float z)
-{
+void ReplicantHook::setPosition(float x, float y, float z) {
 	this->setX(x);
 	this->setY(y);
 	this->setZ(z);
 }
 
-void ReplicantHook::InfiniteHealth(bool enabled)
-{
+void ReplicantHook::InfiniteHealth(bool enabled) {
 	if (enabled)
-		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE *)"\x90\x90\x90\x90", 4);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE*)"\x90\x90\x90\x90", 4);
 	else
-		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE *)"\x89\x44\x81\x4C", 4);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteHealth), (BYTE*)"\x89\x44\x81\x4C", 4);
 }
 
-void ReplicantHook::InfiniteMagic(bool enabled)
-{
+void ReplicantHook::InfiniteMagic(bool enabled) {
 	if (enabled)
-		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE *)"\x90\x90\x90\x90\x90\x90", 6);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE*)"\x90\x90\x90\x90\x90\x90", 6);
 	else
-		_patch((BYTE *)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE *)"\xF3\x0F\x11\x54\x81\x58", 6);
+		_patch((BYTE*)(this->_baseAddress + _offsets.InfiniteMagic), (BYTE*)"\xF3\x0F\x11\x54\x81\x58", 6);
 }
 
-constexpr unsigned int str2int(const char *str, int h = 0)
-{
+constexpr unsigned int str2int(const char* str, int h = 0) {
 	return !str[h] ? 5381 : (str2int(str, h + 1) * 33) ^ str[h];
 }
 
-void ReplicantHook::setActorModel(std::string model)
-{
-	BYTE *modelBytes;
-	switch (str2int(model.c_str()))
-	{
+void ReplicantHook::setActorModel(std::string model) {
+	BYTE* modelBytes;
+	switch (str2int(model.c_str())) {
 	case str2int("nierB"):
-		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
 		break;
 	case str2int("nierT"):
-		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x54\x00\x00"; //nierT
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x54\x00\x00"; //nierT
 		break;
 	case str2int("nierF"):
-		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x46\x00\x00"; //nierF
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x46\x00\x00"; //nierF
 		break;
 	case str2int("nierY"):
-		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x59\x00\x00"; //nierY
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x59\x00\x00"; //nierY
 		break;
 		//case str2int("nier010"):
 		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x31\x30"; //nier010
@@ -370,27 +318,24 @@ void ReplicantHook::setActorModel(std::string model)
 		//	modelBytes = (BYTE*)"\x6E\x69\x65\x72\x30\x33\x30"; //nier030
 		//	break;
 	case str2int("kaineE"):
-		modelBytes = (BYTE *)"\x6B\x61\x69\x6E\x65\x45\x00"; //kaineE
+		modelBytes = (BYTE*)"\x6B\x61\x69\x6E\x65\x45\x00"; //kaineE
 		break;
 	default:
-		modelBytes = (BYTE *)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
+		modelBytes = (BYTE*)"\x6E\x69\x65\x72\x42\x00\x00"; //nierB
 		break;
 	}
-	this->_patch((BYTE *)(this->_baseAddress + _offsets.model), modelBytes, 7);
+	this->_patch((BYTE*)(this->_baseAddress + _offsets.model), modelBytes, 7);
 }
 
-std::string ReplicantHook::getActorModel()
-{
+std::string ReplicantHook::getActorModel() {
 	return readMemoryString(this->_baseAddress + _offsets.model);
 }
 
-std::map<std::string, uintptr_t> ReplicantHook::getInventory(void)
-{
+std::map<std::string, uintptr_t> ReplicantHook::getInventory(void) {
 	return this->_inventory;
 }
 
-int ReplicantHook::addItem(std::string name, int quantity)
-{
+int ReplicantHook::addItem(std::string name, int quantity) {
 	uintptr_t offset = getItemAddress(name);
 	if (offset == -1) //Item not found
 		return -1;
@@ -398,13 +343,12 @@ int ReplicantHook::addItem(std::string name, int quantity)
 	return 0; //Success
 }
 
-int ReplicantHook::removeItem(std::string name)
-{
+int ReplicantHook::removeItem(std::string name) {
 	return addItem(name, 0);
 }
 
-void ReplicantHook::loadInventory()
-{
+void ReplicantHook::loadInventory() {
+	// Recovery
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Medicinal Herb", 0x4374AE0));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Health Salve", 0x4374AE1));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Recovery Potion", 0x4374AE2));
@@ -417,6 +361,8 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Spirit Drop", 0x4374AFB));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Spirit Capsule", 0x4374AFC));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Antidotal Weed", 0x4374AFF));
+
+	// Cultivation
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Speed Fertilizer", 0x4374B09));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Flowering Fertilizer", 0x4374B0A));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Bounty Fertilizer", 0x4374B0B));
@@ -460,6 +406,8 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Blue Moonflower", 0x4374B38));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Indigo Moonflower", 0x4374B39));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("White Moonflower", 0x4374B3A));
+
+	// Fishing
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lugworm", 0x4374B45));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Earthworm", 0x4374B46));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lure", 0x4374B47));
@@ -477,7 +425,9 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Hyneria", 0x4374B5A));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Sandfish", 0x4374B5B));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Rhizodont", 0x4374B5C));
-	this->_inventory.insert(std::pair<std::string, uintptr_t>("Shaman FIsh", 0x4374B5D));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Shaman Fish", 0x4374B5D));
+
+	// Materials
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Aquatic Plant", 0x4374B63));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Deadwood", 0x4374B64));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Rusty Bucket", 0x4374B65));
@@ -504,7 +454,7 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Sap", 0x4374B81));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Mutton", 0x4374B87));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Boar Meat", 0x4374B88));
-	this->_inventory.insert(std::pair<std::string, uintptr_t>("Woll", 0x4374B89));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Wool", 0x4374B89));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Boar Hide", 0x4374B8A));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Wolf Hide", 0x4374B8B));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Wolf Fang", 0x4374B8C));
@@ -552,7 +502,7 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Complex Machine", 0x4374BBA));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Elaborate Machine", 0x4374BBB));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Simple Machine", 0x4374BBC));
-	this->_inventory.insert(std::pair<std::string, uintptr_t>("Stopped Clock ", 0x4374BBD));
+	this->_inventory.insert(std::pair<std::string, uintptr_t>("Stopped Clock", 0x4374BBD));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Broken Wristwatch", 0x4374BBE));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Rusty Kitchen Knife", 0x4374BBF));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Broken Saw", 0x4374BC0));
@@ -577,6 +527,8 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Mouse Tail", 0x4374BDA));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Lizard Tail", 0x4374BDB));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Deer Antler", 0x4374BDF));
+
+	// Key
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Moon Key", 0x4374BE0));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Star Key", 0x4374BE1));
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Light Key", 0x4374BE2));
@@ -659,14 +611,11 @@ void ReplicantHook::loadInventory()
 	this->_inventory.insert(std::pair<std::string, uintptr_t>("Apples", 0x4374C2F));
 }
 
-uintptr_t ReplicantHook::getItemAddress(std::string name)
-{
+uintptr_t ReplicantHook::getItemAddress(std::string name) {
 	std::map<std::string, uintptr_t>::iterator it = _inventory.begin();
 	std::map<std::string, uintptr_t>::iterator end = _inventory.end();
-	for (; it != end; it++)
-	{
-		if (it->first == name)
-		{
+	for (; it != end; it++) {
+		if (it->first == name) {
 			return it->second;
 		}
 	}
