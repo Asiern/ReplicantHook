@@ -26,5 +26,8 @@ prefix = 'this->_inventory.insert(std::pair<std::string, uintptr_t>("'
 sufix = '));'
 with open(path, newline="") as file:
     reader = csv.reader(file, delimiter=",", quotechar="|")
+    next(reader)
     for row in reader:
+        if  row[0] != "":
+            f.write("\n// "+row[0]+"\n")
         f.write(prefix + row[1] + '", ' + row[2] + sufix + "\n")
